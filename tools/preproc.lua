@@ -43,7 +43,7 @@ dirs = {
   end},
 
   {"$%[%{(.-)%}%]", function(ex)
-    return assert(io.popen(ex, "r"):read("a")):gsub("\n$","")
+    return assert(io.popen(ex, "rb"):read("a")):gsub("\n$","")
   end},
 
   {"@%[%{(.+)%}%]", function(ex)
@@ -60,7 +60,7 @@ dirs = {
 
 _G.proc = function(f)
 --  io.write("\27[36m-=>\27[39m processing " .. f .. "\n")
-  local handle, err = io.open(f, "r")
+  local handle, err = io.open(f, "rb")
   if not handle then
     io.write("\27[101;97m ERROR \27[39;49m Cannot open file \27[93m"..f
       .."\27[39m\n")
@@ -98,7 +98,7 @@ Copyright (C) 2021 Ocawesome101 under the GPLv3.
   os.exit(1)
 end
 
-outhandle = assert(io.open(args[2], "w"))
+outhandle = assert(io.open(args[2], "wb"))
 
 proc(args[1])
 
@@ -106,14 +106,14 @@ outhandle:close()
 
 if args[3] == "-strip-comments" then
   io.write("\27[93m-=> \27[39mStripping comments\n")
-  local rhand = assert(io.open(args[2], "r"))
+  local rhand = assert(io.open(args[2], "rb"))
   local data = rhand:read("a")
     :gsub(" *%-%-%[(=*)%[.-%]%1%]", "")
     :gsub("[ \n]*%-%-[^\n]*\n", "")
     :gsub("\n+", "\n")
     :gsub("\n( +)", "\n")
   rhand:close()
-  local whand = assert(io.open(args[2], "w"))
+  local whand = assert(io.open(args[2], "wb"))
   whand:write(data)
   whand:close()
 end
