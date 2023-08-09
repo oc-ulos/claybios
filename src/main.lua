@@ -1,0 +1,5 @@
+-- main source file
+--#include "src/info.lua"
+--#include "src/loaders.lua"
+--#include "src/disks.lua"
+--#include "src/menu.lua"
