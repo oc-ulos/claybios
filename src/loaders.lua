@@ -20,3 +20,22 @@ local loaders={osdi={read=function(drive)
 end},mtpt={read=function(drive)
 @[{part_reader(">c20c4I4I4",'drive.getSectorCapacity()','if meta[2]~="mtpt"then return end',1,3,4,'meta[2]=="boot"',2)}]
 end}}
+local readers={generic=function(part)
+  local proxy=part.drive
+  local data=""
+  for i=part.start,part.start+part.size-1 do
+    data=data..proxy.readSector(i)
+  end
+  return data
+end,managed=function(part)
+  local proxy=part.drive
+  local fd,err=proxy.open("/init.lua","r")
+  if not fd then error(err) end
+  local data=""
+  repeat
+    local chunk=proxy.read(fd,math.huge)
+    data=data..(chunk or"")
+  until not chunk
+  proxy.close(fd)
+  return data
+end}

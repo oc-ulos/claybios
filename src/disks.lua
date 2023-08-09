@@ -9,5 +9,5 @@ for addr in component.list("drive")do
   end
 end
 for addr in component.list("filesystem") do
-  drives[#drives+1]={address=addr,drive=component.proxy(addr),pt="managed"}
+  drives[#drives+1]={address=addr,drive=component.proxy(addr),ptt={{boot=component.invoke(addr,"exists","/init.lua"),type="managed"}},pt="managed"}
 end

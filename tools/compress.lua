@@ -1,4 +1,3 @@
-#!/usr/bin/env lua
 --[[----------------------------------------------------------------------------
 	LZSS - encoder / decoder
 	This is free and unencumbered software released into the public domain.
@@ -78,4 +77,4 @@ function M.compress(input)
 	return table.concat(output)
 end
 
-io.stdout:write(M.compress(io.stdin:read("a")))
+return M
