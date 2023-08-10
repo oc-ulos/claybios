@@ -1,6 +1,6 @@
 local drives={}
 for addr in component.list("drive")do
-  local drive=component.proxy(drive)
+  local drive=component.proxy(addr)
   for k,loader in pairs(loaders) do
     local pt=loader.read(drive)
     if pt then

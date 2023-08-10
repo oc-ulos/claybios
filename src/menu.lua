@@ -6,7 +6,7 @@ local selected=0
 for i=1,#drives do
   local drive=drives[i]
   for j=1,#drive.ptt do
-    if drive.ptt[j].boot then
+    if drive.ptt[j] and drive.ptt[j].boot then
       bootable[#bootable+1]={drive=drive.drive,start=drive.ptt[j].start,size=drive.ptt[j].size,type=drive.ptt[j].type}
       if drive.address == eeprom.getData() then
         selected = #bootable
@@ -35,7 +35,9 @@ elseif #bootable>1 then
       char=string.char(signal[3])
       selected=tonumber(char)
     end
-  until char or bootable[selected]
+  until bootable[selected]
+elseif selected == 0 then
+  selected = 1
 end
 local boot = bootable[selected]
 write("Booting from "..boot.drive.address:sub(1,8))
