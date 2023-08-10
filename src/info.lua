@@ -13,21 +13,23 @@ if gpu and screen then
     gpu.fill(1,_y,w,1," ")
     gpu.set(1,_y,text)
   end
-  local splash = {
-    --#include "src/logo.lua"
-  }
-  for i, line in ipairs(splash) do
-    local xo = 1
-    _y=math.max(_y,i+1)
-    for _, ent in ipairs(line) do
-      gpu.setForeground(ent[1])
-      gpu.setBackground(ent[2])
-      gpu.set(xo, i, ent[3])
-      xo = xo + utf8.len(ent[3])
+  if config[4] then
+    local splash = {
+      --#include "src/logo.lua"
+    }
+    for i, line in ipairs(splash) do
+      local xo = 1
+      _y=math.max(_y,i+1)
+      for _, ent in ipairs(line) do
+        gpu.setForeground(ent[1])
+        gpu.setBackground(ent[2])
+        gpu.set(xo, i, ent[3])
+        xo = xo + utf8.len(ent[3])
+      end
     end
+    gpu.setForeground(0xFFFFFF)
+    gpu.setBackground(0)
   end
-  gpu.setForeground(0xFFFFFF)
-  gpu.setBackground(0)
 else
   gpu,screen=nil,nil
 end

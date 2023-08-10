@@ -1,6 +1,5 @@
 -- menus?
 
-local eeprom=component.proxy((component.list("eeprom")()))
 local bootable={}
 local selected=0
 for i=1,#drives do
@@ -27,21 +26,23 @@ elseif #bootable>1 then
   end
   if selected>0 then
     write("Will default to "..selected.." if no choice is made")
+    write("Press any non-numeric key to bypass timeout")
   end
   repeat
-    local signal=table.pack(computer.pullSignal(5))
+    local signal=table.pack(computer.pullSignal(config[4]))
     local char
     if signal[1]=="key_down" then
       char=string.char(signal[3])
       selected=tonumber(char)
     end
-  until bootable[selected]
+  until (#signal == 0 or signal[1] == "key_down") and bootable[selected]
 elseif selected == 0 then
   selected = 1
 end
-local boot = bootable[selected]
+local boot=bootable[selected]
 write("Booting from "..boot.drive.address:sub(1,8))
-eeprom.setData(boot.drive.address)
+config[1]=boot.drive.address
+save()
 function computer.getBootAddress()return boot.drive.address end
 local ok,err=xpcall(function()
   assert(load((readers[boot.type] or readers.generic)(boot),"="..boot.drive.address:sub(1,8)))()

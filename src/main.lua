@@ -1,4 +1,5 @@
 -- main source file
+--#include "src/config.lua"
 --#include "src/info.lua"
 --#include "src/loaders.lua"
 --#include "src/disks.lua"
