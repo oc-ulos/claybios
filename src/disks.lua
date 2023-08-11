@@ -4,7 +4,7 @@ for addr in component.list("drive")do
   for k,loader in pairs(loaders) do
     local pt=loader.read(drive)
     if pt then
-      drives[#drives+1]={address=addr,drive=drive,ptt=k,pt=pt}
+      drives[#drives+1]={address=addr,drive=drive,ptt=pt,pt=k}
     end
   end
 end

@@ -86,7 +86,12 @@ if #bootable==0 then
   write("No bootable medium found.")
   while true do computer.pullSignal() end
 elseif #bootable>1 then
-  selected=menu("Please select a boot device.",bootable,config[2])
+  local options={}
+  for i=1,#bootable do
+    local t=bootable[i]
+    options[i]=string.format("%s type %s",t.label or t.drive.address:sub(1,8),t.type)
+  end
+  selected=menu("Please select a boot device.",options,options[selected]and config[2]or math.huge,selected)
 elseif selected == 0 then
   selected = 1
 end
