@@ -1,4 +1,5 @@
 -- system information
+
 local gpu,screen=component.list("gpu")(),component.list("screen")()
 local function write()end
 if gpu and screen then
@@ -8,15 +9,18 @@ if gpu and screen then
   gpu.setResolution(w,h)
   gpu.fill(1,1,w,h," ")
   local _y=0
+  local offset=7
   write=function(text,y)
     _y=y or(_y+1)
+    if _y>h then _y=_y-1 gpu.copy(1,offset,w,h,0,-1) gpu.fill(1,h,w,1," ") end
     gpu.fill(1,_y,w,1," ")
     gpu.set(1,_y,text)
   end
-  if config[4] then
+  if config[4]==1 and gpu.maxDepth()>1 then
     local splash = {
       --#include "src/logo.lua"
     }
+    offset=offset+#splash+1
     for i, line in ipairs(splash) do
       local xo = 1
       _y=math.max(_y,i+1)
