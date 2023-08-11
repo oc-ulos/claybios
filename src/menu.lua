@@ -33,24 +33,24 @@ end
 
 write("Press F12 for configuration")
 write("")
-if waitkey(math.max(0.1,config[2])) == 88 then
+if waitkey(math.max(0.1,config[c.timeout])) == 88 then
   while true do
-    local opt = menu("Select an option:", {"Exit", "Clear boot address", "Set timeout ("..config[2]..")", "Toggle play beep ("..config[3]..")", "Show logo on boot ("..config[4]..")"})
+    local opt = menu("Select an option:", {"Exit", "Clear boot address", "Set timeout ("..config[c.timeout]..")", "Toggle play beep ("..config[c.beep]..")", "Show logo on boot ("..config[c.logo]..")"})
     write("")
     if opt == 1 then
       computer.shutdown(true)
     elseif opt == 2 then
-      config[1] = ""
+      config[c.boot] = ""
       save()
       write("Boot address cleared.")
     elseif opt == 3 then
-      write("Enter new timeout (current "..config[2].."):")
+      write("Enter new timeout (current "..config[c.timeout].."):")
       while true do
         local signal={computer.pullSignal()}
         if signal[1]=="key_down" then
           local num=tonumber(string.char(math.max(0,math.min(255,signal[3]))))
           if num then
-            config[2]=num
+            config[c.timeout]=num
             write("Timeout set.")
             break
           end
@@ -58,10 +58,10 @@ if waitkey(math.max(0.1,config[2])) == 88 then
       end
       save()
     elseif opt == 4 then
-      config[3]=math.abs(config[3]-1)
+      config[c.beep]=math.abs(config[c.beep]-1)
       save()
     elseif opt == 5 then
-      config[4]=math.abs(config[4]-1)
+      config[c.logo]=math.abs(config[c.logo]-1)
       save()
     end
   end
@@ -73,8 +73,8 @@ for i=1,#drives do
   local drive=drives[i]
   for j=1,#drive.ptt do
     if drive.ptt[j] and drive.ptt[j].boot then
-      bootable[#bootable+1]={drive=drive.drive,start=drive.ptt[j].start,size=drive.ptt[j].size,type=drive.ptt[j].type,label=drive.ptt[j].label}
-      if drive.address == eeprom.getData() then
+      bootable[#bootable+1]={drive=drive.drive,start=drive.ptt[j].start,size=drive.ptt[j].size,type=drive.ptt[j].type,label=drive.ptt[j].label,part=j}
+      if drive.address == config[c.boot] and j == config[c.partition] then
         selected = #bootable
       end
     end
@@ -91,15 +91,22 @@ elseif #bootable>1 then
     local t=bootable[i]
     options[i]=string.format("%s type %s",t.label or t.drive.address:sub(1,8),t.type)
   end
-  selected=menu("Please select a boot device.",options,options[selected]and config[2]or math.huge,selected)
+  selected=menu("Please select a boot device.",options,options[selected]and config[c.timeout]or math.huge,selected)
 elseif selected == 0 then
   selected = 1
 end
 local boot=bootable[selected]
-write("Booting from "..boot.drive.address:sub(1,8))
-config[1]=boot.drive.address
+write("Booting from "..boot.drive.address:sub(1,8)..","..boot.part)
+config[c.boot]=boot.drive.address
+config[c.partition]=boot.part
 save()
-function computer.getBootAddress()return boot.drive.address end
+function computer.getBootAddress()
+  local addr = boot.drive.address
+  if boot.type~="managed" then
+    addr=addr..","..boot.part
+  end
+  return addr
+end
 local ok,err=xpcall(function()
   assert(load((readers[boot.type] or readers.generic)(boot),"="..boot.drive.address:sub(1,8)))()
 end, debug.traceback)

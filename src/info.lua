@@ -16,7 +16,7 @@ if gpu and screen then
     gpu.fill(1,_y,w,1," ")
     gpu.set(1,_y,text)
   end
-  if config[4]==1 and gpu.maxDepth()>1 then
+  if config[c.logo]==1 and gpu.maxDepth()>1 then
     local splash = {
       --#include "src/logo.lua"
     }
