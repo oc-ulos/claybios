@@ -16,7 +16,7 @@
 -- return part
 --@[{(function()function _G.part_reader(pattern,sector,verifier,name,start,size,bootcond,ptype) return "local pattern,sector,part,meta='"..pattern.."',drive.readSector("..sector.."),{};meta={pattern:unpack(sector)}"..verifier..";part.label=meta["..name.."]repeat sector = sector:sub(33)meta={pattern:unpack(sector)}meta["..name.."]=meta["..name.."]:gsub('\\0','')if #meta["..name.."]>0 then part[#part+1]={start=meta["..start.."],size=meta["..size.."],boot="..bootcond..",type=meta["..ptype.."],name=meta["..name.."]}end until #sector <= 32 return part"end end)()}]
 local loaders={osdi={read=function(drive)
-@[{part_reader("<I4I4c8I3c13",1,'if meta[1]~=1 or meta[2]~=0 or meta[3]~="OSDI\\xAA\\xAA\\85\\85" then error"x" return end',5,1,2,'meta[4]&512>0',3)}]
+@[{part_reader("<I4I4c8I3c13",1,'if meta[1]~=1 or meta[2]~=0 or meta[3]~="OSDI\\xAA\\xAA\\85\\85" then return end',5,1,2,'meta[4]&512>0',3)}]
 end},mtpt={read=function(drive)
 @[{part_reader(">c20c4I4I4",'drive.getCapacity()/drive.getSectorSize()','if meta[2]~="mtpt"then return end',1,3,4,'meta[2]=="boot"',2)}]
 end}}
