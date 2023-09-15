@@ -108,7 +108,7 @@ function computer.getBootAddress()
   return addr
 end
 local ok,err=xpcall(function()
-  assert(load((readers[boot.type] or readers.generic)(boot),"="..boot.drive.address:sub(1,8)))()
+  assert(load((readers[boot.type] or readers.generic)(boot),"="..boot.drive.address:sub(1,8)))(write)
 end, debug.traceback)
 if not ok and err then
   for line in err:gsub("\t","  "):gmatch("[^\n]+") do
