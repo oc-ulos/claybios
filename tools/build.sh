@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 tools/preproc.lua src/main.lua /tmp/built.lua -strip-comments
-tools/zlua.lua PrismBIOS < /tmp/built.lua > bios.lua
+rm -rf out
+mkdir -p out/usr/share/prismbios
+tools/zlua.lua PrismBIOS < /tmp/built.lua > out/usr/share/prismbios/bios.lua
 if [ $(stat -c %s bios.lua) -gt 4096 ]; then
   echo WARNING: bios.lua larger than 4096 bytes
 else
