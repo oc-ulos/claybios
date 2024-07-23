@@ -24,7 +24,7 @@ local readers={generic=function(part)
   local proxy=part.drive
   local data=""
   for i=1,part.size do
-    data=data..proxy.readSector(i+part.start):gsub("\0+$","")
+    data=data..proxy.readSector(i+part.start-1):gsub("\0+$","")
   end
   return data
 end,managed=function(part)
