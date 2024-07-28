@@ -13,7 +13,7 @@ local c={
   timeout=2,
   beep=3,
   logo=4,
-  partition=5
+  partition=5,
 }
 local eeprom=component.proxy((component.list("eeprom")()))
 local data=eeprom.getData()

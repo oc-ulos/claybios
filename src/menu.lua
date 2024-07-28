@@ -32,8 +32,10 @@ local function menu(title,options,timeout,default)
 end
 
 write("Press F12 for configuration")
+write("Press F10 to show boot menu")
 write("")
-if waitkey(math.max(0.1,config[c.timeout])) == 88 then
+local key = waitkey(math.max(0.1,config[c.timeout]))
+if key == 88 then
   while true do
     local opt = menu("Select an option:", {"Exit", "Clear boot address", "Set timeout ("..config[c.timeout]..")", "Toggle play beep ("..config[c.beep]..")", "Show logo on boot ("..config[c.logo]..")"})
     write("")
@@ -85,13 +87,13 @@ if #bootable==0 then
   computer.beep("....")
   write("No bootable medium found.")
   while true do computer.pullSignal() end
-elseif #bootable>1 then
+elseif #bootable>1 and (key==68 or not bootable[selected]) then
   local options={}
   for i=1,#bootable do
     local t=bootable[i]
     options[i]=string.format("%s type %s",t.label or t.drive.address:sub(1,8),t.type)
   end
-  selected=menu("Please select a boot device.",options,options[selected]and config[c.timeout]or math.huge,selected)
+  selected=menu("Please select a boot device.",options,key==68 and math.huge or options[selected]and config[c.timeout]or math.huge,selected)
 elseif selected == 0 then
   selected = 1
 end
